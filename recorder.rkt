@@ -1,6 +1,7 @@
 #lang racket/base
 
-(require racket/pretty racket/match db)
+(require racket/match db)
+(provide (all-defined-out))
 
 (struct record (notes [id #:auto] [timestamp #:auto]) #:transparent #:auto-value null)
 
