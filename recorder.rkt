@@ -35,9 +35,9 @@
   (sqlite3-connect #:database "./baby.db" #:mode 'create))
 
 ;;; Convenience functions
-(define (record-dirty! [notes ""]) (record-persist! (diaper notes "dirty")))
-(define (record-wet! [notes ""]) (record-persist! (diaper notes "wet")))
-(define (record-breastfeed-start! side [notes ""]) (record-persist! (breast-feed notes "start" side)))
-(define (record-breastfeed-stop! side [notes ""]) (record-persist! (breast-feed notes "stop" side)))
-(define (record-bottlefeed-start! quantity [notes ""]) (record-persist! (bottle-feed notes "start" quantity)))
-(define (record-bottlefeed-stop! quantity [notes ""]) (record-persist! (bottle-feed notes "stop" quantity)))
+(define (record-dirty [notes ""]) (record-persist! (diaper notes "dirty")))
+(define (record-wet [notes ""]) (record-persist! (diaper notes "wet")))
+(define (record-breastfeed-start side [notes ""]) (record-persist! (breast-feed notes "start" side)))
+(define (record-breastfeed-stop side [notes ""]) (record-persist! (breast-feed notes "stop" side)))
+(define (record-bottlefeed-start quantity [notes ""]) (record-persist! (bottle-feed notes "start" quantity)))
+(define (record-bottlefeed-stop quantity [notes ""]) (record-persist! (bottle-feed notes "stop" quantity)))
