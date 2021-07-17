@@ -1,6 +1,7 @@
 #!/usr/bin/env racket
-#lang racket
+#lang racket/base
 
+(require racket/cmdline racket/port racket/match)
 (require "recorder.rkt")
 
 (init-db!)
