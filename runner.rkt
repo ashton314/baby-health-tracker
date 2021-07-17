@@ -3,6 +3,8 @@
 
 (require "recorder.rkt")
 
+(init-db!)
+
 (define the-type (make-parameter "diaper"))
 (define the-subtype (make-parameter "wet"))
 (define ask-notes? (make-parameter #t))
