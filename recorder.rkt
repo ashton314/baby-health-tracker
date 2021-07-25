@@ -4,6 +4,7 @@
 (require racket/match racket/date db)
 (provide (all-defined-out))
 
+(date-display-format 'iso-8601)
 (displayln (date->string (seconds->date (current-seconds)) #t) (current-error-port))
 
 (struct record (notes [id #:auto] [timestamp #:auto]) #:transparent #:auto-value null)
