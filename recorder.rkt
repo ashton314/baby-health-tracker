@@ -1,5 +1,6 @@
 #lang racket/base
 
+(require (for-syntax racket/syntax racket/base))
 (require racket/match racket/date db)
 (provide (all-defined-out))
 
@@ -37,10 +38,24 @@
   (displayln "Creating a new db connection" (current-error-port))
   (sqlite3-connect #:database "./baby.db" #:mode 'create))
 
+(define-syntax (feed-event stx)
+  (syntax-case stx ()
+    [(_ feed-type event-name)
+     (with-syntax ([func-name (format-id #'feed-type "record-~a-~a" #'feed-type #'event-name)]
+                   [event-arg (symbol->string (syntax->datum #'event-name))])
+       #'(define (func-name [arg ""] [notes ""])
+           (record-persist! (feed-type notes event-arg arg))))]))
+
 ;;; Convenience functions
 (define (record-dirty [notes ""]) (record-persist! (diaper notes "dirty")))
 (define (record-wet [notes ""]) (record-persist! (diaper notes "wet")))
-(define (record-breastfeed-start side [notes ""]) (record-persist! (breast-feed notes "start" side)))
-(define (record-breastfeed-stop side [notes ""]) (record-persist! (breast-feed notes "stop" side)))
-(define (record-bottlefeed-start quantity [notes ""]) (record-persist! (bottle-feed notes "start" quantity)))
-(define (record-bottlefeed-stop quantity [notes ""]) (record-persist! (bottle-feed notes "stop" quantity)))
+
+(feed-event breast-feed start)
+(feed-event breast-feed pause)
+(feed-event breast-feed resume)
+(feed-event breast-feed end)
+
+(feed-event bottle-feed start)
+(feed-event bottle-feed pause)
+(feed-event bottle-feed resume)
+(feed-event bottle-feed end)
