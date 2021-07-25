@@ -15,9 +15,9 @@
 
 (define (record-persist! rec)
   (match rec
-    [(diaper notes _ _ type) (query-exec (fetch-db-instance) "insert into diaper_log (type, notes) values ($1, $2)" type notes)]
-    [(breast-feed notes _ _ event side) (query-exec (fetch-db-instance) "insert into breastfeed_log (event, side, notes) values ($1, $2, $3)" event side notes)]
-    [(bottle-feed notes _ _ event quantity) (query-exec (fetch-db-instance) "insert into bottlefeed_log (event, quantity, notes) values ($1, $2, $3)" event quantity notes)])
+    [(diaper notes _ _ type) (query-exec (fetch-db-instance) "insert into diaper_log (type, notes) values ($1, $2)" (string-downcase type) notes)]
+    [(breast-feed notes _ _ event side) (query-exec (fetch-db-instance) "insert into breastfeed_log (event, side, notes) values ($1, $2, $3)" (string-downcase event) (string-downcase side) notes)]
+    [(bottle-feed notes _ _ event quantity) (query-exec (fetch-db-instance) "insert into bottlefeed_log (event, quantity, notes) values ($1, $2, $3)" (string-downcase event) (string-downcase quantity) notes)])
   (displayln "recorded"))
 
 (define (init-db!)
