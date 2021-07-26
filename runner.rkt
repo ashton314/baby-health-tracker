@@ -27,8 +27,11 @@
    [("-d" "--datum") td
                      "Subtype Datum: for breastfeeding, this is the side (<left> or <right>); for bottle feeding, this is the quantity"
                      (the-subtype-datum td)]
-   #:args ()
-   (command 'record (the-type) (the-subtype) "")))
+   #:args cmd
+   (match cmd
+     [(list "record") (command 'record (the-type) (the-subtype) "")]
+     [(list "query") (command 'query (the-type) (the-subtype) "")]
+     ['() (command 'record (the-type) (the-subtype) "")])))
 
 
 (when (ask-notes?)
@@ -36,6 +39,9 @@
   (the-notes (port->string (current-input-port))))
 
 (match args
+  [(command 'query type _ _)
+   (match type
+     ["last-feeding" (period-since-last-feeding)])]
   [(command 'record type subtype notes)
    (match type
      ["diaper" (match subtype ["wet" (record-wet (the-notes))] ["dirty" (record-dirty (the-notes))])]

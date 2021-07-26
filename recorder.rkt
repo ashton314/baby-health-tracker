@@ -1,11 +1,10 @@
 #lang racket/base
 
 (require (for-syntax racket/syntax racket/base))
-(require racket/match racket/date db)
+(require racket/match gregor gregor/period db)
 (provide (all-defined-out))
 
-(date-display-format 'iso-8601)
-(displayln (date->string (seconds->date (current-seconds)) #t) (current-error-port))
+(displayln (~t (now) "[YYYY-MM-dd hh:mm:ss]") (current-error-port))
 
 (struct record (notes [id #:auto] [timestamp #:auto]) #:transparent #:auto-value null)
 
@@ -60,3 +59,23 @@
 (feed-event bottle-feed pause)
 (feed-event bottle-feed resume)
 (feed-event bottle-feed end)
+
+;;; Query functions
+(define (last-feeding-time)
+  (match (query-maybe-value (fetch-db-instance) "select timestamp from breastfeed_log where event in ('end', 'pause') order by timestamp desc limit 1")
+    [#f 'error]
+    [(? string? s) (parse-datetime s "yyyy-MM-dd HH:mm:ss")]))
+
+(define (here-and-now)
+  (with-timezone (now) (current-timezone)))
+
+(define (correct-time utc-datetime)
+  (adjust-timezone (with-timezone utc-datetime "UTC") (current-timezone)))
+
+(define (period-since-last-feeding)
+  (let* ([last-feeding (correct-time (last-feeding-time))]
+         [duration (period-between last-feeding (here-and-now) '(hours minutes))])
+    (format "Last feeding was at ~a, which was ~a hours and ~a minutes ago"
+            (~t last-feeding "hh:mm a")
+            (period-ref duration 'hours)
+            (period-ref duration 'minutes))))
